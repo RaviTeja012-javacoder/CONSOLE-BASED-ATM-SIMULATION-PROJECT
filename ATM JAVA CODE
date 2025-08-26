@@ -1,0 +1,119 @@
+package com.atmproject;
+
+import java.util.Scanner;
+
+class ATMSimulation {
+	private double balance;
+	private final String pin = "1234";
+	private String[] transactionHistory;
+	private int transactionCount;
+
+	public ATMSimulation(double initialBalance) {
+		this.balance = initialBalance;
+		this.transactionHistory = new String[100];
+		this.transactionCount = 0;
+		addTransaction("ACCOUNT CREATED WITH BALANCE: Rs " + initialBalance);
+	}
+
+	private void addTransaction(String detail) {
+		if (transactionCount < transactionHistory.length) {
+			transactionHistory[transactionCount++] = detail;
+		}
+	}
+
+	public boolean verifyPin(String enteredPin) {
+		return pin.equals(enteredPin);
+	}
+
+	public void checkBalance() {
+		System.out.println("YOUR CURRENT BALANCE IS: Rs " + balance);
+	}
+
+	public void deposit(double amount) {
+		if (amount > 0) {
+			balance += amount;
+			addTransaction("Deposited: Rs " + amount + " | Balance: Rs " + balance);
+			System.out.println("Successfully Deposited Rs " + amount);
+		} else {
+			System.out.println("Invalid Deposit Amount");
+		}
+	}
+
+	public void withdraw(double amount) {
+		if (amount > 0 && amount <= balance) {
+			balance -= amount;
+			addTransaction("Withdrawn: Rs " + amount + " | Balance: Rs " + balance);
+			System.out.println("Successfully Withdrawn Rs " + amount);
+		} else {
+			System.out.println("Insufficient Balance or Invalid Amount");
+		}
+	}
+
+	public void showTransactionHistory() {
+		System.out.println("\n--- Transaction History ---");
+		for (int i = 0; i < transactionCount; i++) {
+			System.out.println(transactionHistory[i]);
+		}
+	}
+}
+
+public class ATM {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		ATMSimulation atm = new ATMSimulation(5000);
+
+		System.out.print("Enter Your Pin: ");
+		String enteredPin = sc.nextLine();
+
+		if (!atm.verifyPin(enteredPin)) {
+			System.out.println("Incorrect Pin... Exiting!");
+			sc.close();
+			return;
+		}
+
+		int choice;
+		do {
+			System.out.println("\n=== ATM MENU ===");
+			System.out.println("1. Check Balance");
+			System.out.println("2. Deposit Money");
+			System.out.println("3. Withdraw Money");
+			System.out.println("4. Transaction History");
+			System.out.println("5. Exit");
+			System.out.print("Enter Your Choice: ");
+
+			choice = sc.nextInt();
+
+			switch (choice) {
+			case 1:
+				atm.checkBalance();
+				break;
+
+			case 2:
+				System.out.print("Enter Deposit Amount: ");
+				double depositAmount = sc.nextDouble();
+				atm.deposit(depositAmount);
+				break;
+
+			case 3:
+				System.out.print("Enter Withdrawal Amount: ");
+				double withdrawAmount = sc.nextDouble();
+				atm.withdraw(withdrawAmount);
+				break;
+
+			case 4:
+				atm.showTransactionHistory();
+				break;
+
+			case 5:
+				System.out.println("Thank You For Using The ATM. Goodbye!");
+				break;
+
+			default:
+				System.out.println("Invalid Choice! Try Again.");
+			}
+
+		} while (choice != 5);
+
+		sc.close();
+	}
+}
